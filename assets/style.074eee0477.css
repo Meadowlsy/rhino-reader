@@ -89,7 +89,7 @@ button,.ticker-chip{transition:background 150ms ease,transform 150ms ease,color 
 
 /* Compact reading: original title, then substantive points and paragraphs. */
 .article-main{padding:20px 32px 0}.breadcrumbs{margin-bottom:17px}
-.article-header h1,.reader-content .article-header h1{font-size:26px;line-height:1.4;letter-spacing:0;margin:0 0 10px;text-wrap:balance}
+.article-header h1,.reader-content .article-header h1{font-size:26px;line-height:1.4;letter-spacing:0;margin:0 0 10px;text-wrap:wrap}
 .reader-content{max-width:900px;padding:18px 34px 0}
 .reader-chapters{padding-bottom:8px;margin-bottom:12px}.reader-chapters summary{padding:1px 0}
 .reader-chapters nav{margin-top:8px;gap:2px 18px}.reader-chapters .toc-link{padding:4px 0;line-height:1.55}
@@ -152,3 +152,11 @@ button,.ticker-chip{transition:background 150ms ease,transform 150ms ease,color 
 .empty-symbol{display:inline-grid;place-items:center;width:53px;height:53px;background:#EDF3FC;border-radius:15px;color:#8CA8CD}.empty-symbol .ui-icon{width:25px;height:25px}
 @media(max-width:1100px){.library-hero .stats{gap:24px}.library-hero .stats>div{gap:9px}.select-field{width:145px}.filter-chip{gap:5px;padding:6px 8px}}
 @media(max-width:720px){.library-main{padding-top:20px}.library-hero{padding:13px 15px}.library-hero .stats{display:grid;grid-template-columns:1fr 1fr;gap:15px 19px}.library-hero .stats>div{gap:9px}.stat-icon{width:31px;height:31px;border-radius:9px}.stat-icon .ui-icon{width:17px;height:17px}.library-hero .stats b{font-size:21px}.search-row{display:flex;flex-wrap:wrap;gap:8px}.search-field{flex-basis:100%;height:40px}.select-field{flex:1;width:auto;height:38px}.select-field select{height:36px;font-size:10px}.filter-row{gap:4px}.filter-chip{font-size:10px;padding:6px 7px}.video-card{grid-template-columns:65px minmax(0,1fr)}.date-rail{padding:0 8px;margin:19px 0}.date-rail strong{font-size:32px}.date-rail .read-link{width:38px;height:38px;min-height:38px;border-radius:10px}.card-content{padding:17px 15px 0}.card-content h2{font-size:20px;line-height:1.5}.card-meta{gap:10px;font-size:9px}.card-meta .new-label{font-size:7px}.card-points{padding:8px 10px;margin-top:13px}.card-points li{font-size:10px;line-height:1.75}.card-footer{margin-top:18px;min-height:51px;padding-bottom:14px}.library-footer{font-size:7px}}
+
+/* Keep title lines natural and remove the empty card action strip. */
+.article-header h1,.reader-content .article-header h1{font-size:20px;line-height:1.5;font-weight:500;color:#3C608C;text-wrap:wrap;word-break:normal;overflow-wrap:normal;line-break:strict;letter-spacing:0}
+.card-content{padding-bottom:18px}.card-content h2{font-size:21px;font-weight:550;color:#2F527D;line-height:1.5;text-wrap:wrap;word-break:normal;line-break:strict}
+.date-rail .read-link{margin-top:16px;width:33px;height:33px;min-height:33px;border-radius:9px;border-color:#D5E2F4;background:#F2F7FF;box-shadow:inset 0 1px 0 #FFFFFF;color:#527BAF}
+.date-rail .read-link>.ui-icon{width:18px;height:18px}
+.card-points{margin-bottom:0}
+@media(max-width:720px){.article-header h1,.reader-content .article-header h1{font-size:19px;line-height:1.5;font-weight:500}.card-content{padding-bottom:15px}.card-content h2{font-size:19px;font-weight:550}.date-rail .read-link{margin-top:13px;width:32px;height:32px;min-height:32px;border-radius:8px}}
