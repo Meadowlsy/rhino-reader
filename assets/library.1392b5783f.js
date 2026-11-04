@@ -58,7 +58,7 @@
  });
  document.getElementById('video-list').addEventListener('keydown',e=>{const card=e.target.closest('.video-card');if(card&&e.target===card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openReader(card.dataset.id,card);}});
  document.getElementById('reader-back').addEventListener('click',requestClose);document.getElementById('reader-close').addEventListener('click',requestClose);
- document.getElementById('reader-directory').addEventListener('click',()=>{content.querySelector('.reader-chapters').open=true;scroller.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});});
+ document.getElementById('reader-directory').addEventListener('click',()=>{content.querySelector('.reader-chapters').open=true;scroller.scrollTo({top:0,behavior:'instant'});});
  dialog.addEventListener('cancel',e=>{e.preventDefault();requestClose();});
  dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)requestClose();}});
  content.addEventListener('click',e=>{
@@ -66,7 +66,7 @@
   const link=e.target.closest('a');if(!link||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
   const href=link.getAttribute('href');
   if(/^#(?:chapter-\d+|source|takeaways|key-[a-z0-9_-]+|point-[a-z0-9_-]+)$/.test(href||'')){
-   const target=content.querySelector(href);if(target){e.preventDefault();content.querySelector('.reader-chapters').open=false;target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
+   const target=content.querySelector(href);if(target){e.preventDefault();content.querySelector('.reader-chapters').open=false;target.scrollIntoView({behavior:'instant',block:'start'});}
   }else if(href?.startsWith('index.html?stock=')){e.preventDefault();const selected=new URL(link.href).searchParams.get('stock');afterClose=()=>{stock.value=selected;render();};requestClose();}
  });
  addEventListener('popstate',()=>{const id=hashId();if(id)openReader(id,null,false);else finishReader();});
