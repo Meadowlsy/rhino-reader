@@ -1,17 +1,17 @@
 (()=>{
  const {catalog,state}=Rhino;const params=new URLSearchParams(location.search);
- let type=params.get('type')||'',month=params.get('month')||'',view=params.get('view')||'';
+ let type=params.get('type')||'',month=params.get('month')||'',view=params.get('view')==='favorites'?'favorites':'';
  const search=document.getElementById('library-search'),stock=document.getElementById('stock-filter'),sort=document.getElementById('sort-order');
  search.value=params.get('q')||'';stock.value=params.get('stock')||'';sort.value=params.get('sort')==='oldest'?'oldest':'newest';
  const normalize=s=>s.normalize('NFKC').toLocaleLowerCase().trim();
  function render(){
   const words=normalize(search.value).split(/\s+/).filter(Boolean),s=stock.value;
-  const visible=catalog.filter(a=>(!month||a.published_date.startsWith(month))&&(!type||a.analysis_types.includes(type))&&(!s||a.securities.some(x=>x.symbol===s))&&(view!=='favorites'||state(a.video_id).favorite)&&(view!=='unread'||!state(a.video_id).read)&&words.every(w=>normalize(a.search_text).includes(w)));
+  const visible=catalog.filter(a=>(!month||a.published_date.startsWith(month))&&(!type||a.analysis_types.includes(type))&&(!s||a.securities.some(x=>x.symbol===s))&&(view!=='favorites'||state(a.video_id).favorite)&&words.every(w=>normalize(a.search_text).includes(w)));
   const ids=new Set(visible.map(a=>a.video_id));
   document.querySelectorAll('.video-card').forEach(card=>card.hidden=!ids.has(card.dataset.id));
   const oldest=sort.value==='oldest';const groups=[...document.querySelectorAll('.month-group')].sort((a,b)=>oldest?a.dataset.group.localeCompare(b.dataset.group):b.dataset.group.localeCompare(a.dataset.group));
   for(const group of groups){const cards=[...group.querySelectorAll('.video-card')].sort((a,b)=>{const ai=catalog.findIndex(x=>x.video_id===a.dataset.id),bi=catalog.findIndex(x=>x.video_id===b.dataset.id);return oldest?bi-ai:ai-bi;});cards.forEach(c=>group.querySelector('.month-cards').append(c));const count=cards.filter(c=>!c.hidden).length;group.hidden=count===0;group.querySelector('.month-visible-count').textContent=`${count} 期`;document.getElementById('video-list').append(group);}
-  const labels=[view==='favorites'?'我的收藏':view==='unread'?'未读 / 阅读中':'全部视频',month,type,s].filter(Boolean);
+  const labels=[view==='favorites'?'我的收藏':'全部视频',month,type,s].filter(Boolean);
   document.getElementById('results-label').textContent=`${labels.join(' / ')} · ${visible.length} 期`;
   document.getElementById('empty-results').hidden=visible.length>0;
   document.getElementById('clear-filters').hidden=!(month||type||s||search.value||view);
