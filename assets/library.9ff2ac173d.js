@@ -65,7 +65,7 @@
   if(e.target.closest('[data-close-reader]')){requestClose();return;}
   const link=e.target.closest('a');if(!link||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
   const href=link.getAttribute('href');
-  if(/^#(?:chapter-\d+|source)$/.test(href||'')){
+  if(/^#(?:chapter-\d+|source|takeaways|key-[a-z0-9_-]+|point-[a-z0-9_-]+)$/.test(href||'')){
    const target=content.querySelector(href);if(target){e.preventDefault();content.querySelector('.reader-chapters').open=false;target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
   }else if(href?.startsWith('index.html?stock=')){e.preventDefault();const selected=new URL(link.href).searchParams.get('stock');afterClose=()=>{stock.value=selected;render();};requestClose();}
  });

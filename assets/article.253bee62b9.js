@@ -47,14 +47,17 @@
   const audio=$('#audio'),panel=$('#transcript-panel'),toggle=$('#toggle-transcript'),list=$('#transcript-list');
   let segments=all('.transcript-segment'),loading=false;
   const play=$('#audio-play'),seek=$('#audio-seek');
+  const pointButtons=all('.point-replay');let activePoint=null,clipEnd=null,seekTicket=0;
+  function syncPoints(){for(const button of pointButtons){const active=button===activePoint,playing=active&&!audio.paused;button.classList.toggle('is-playing',playing);button.setAttribute('aria-pressed',String(playing));button.querySelector('.point-play-icon').textContent=playing?'Ⅱ':'▶';button.querySelector('.point-play-label').textContent=active?(audio.paused?'继续':'暂停'):'回听';button.setAttribute('aria-label',playing?button.dataset.replayLabel.replace(/^回听/,'暂停回听'):button.dataset.replayLabel);}}
+  function clearPoint(){activePoint=null;clipEnd=null;syncPoints();}
   const format=t=>`${String(Math.floor((t||0)/60)).padStart(2,'0')}:${String(Math.floor((t||0)%60)).padStart(2,'0')}`;
   audio.hidden=true;audio.controls=false;$('#audio-player').hidden=false;
   on(play,'click',()=>{if(audio.paused)audio.play().catch(()=>Rhino.toast('音频暂时无法播放，请检查本地音频文件。'));else audio.pause();});
-  function playbackState(){play.textContent=audio.paused?'播放':'暂停';play.setAttribute('aria-label',audio.paused?'播放回听':'暂停回听');}
+  function playbackState(){play.textContent=audio.paused?'播放':'暂停';play.setAttribute('aria-label',audio.paused?'播放回听':'暂停回听');syncPoints();}
   for(const event of ['play','pause','ended'])on(audio,event,playbackState);
   on(audio,'loadedmetadata',()=>{seek.max=audio.duration;$('#audio-duration').textContent=format(audio.duration);});
-  on(audio,'timeupdate',()=>{seek.value=audio.currentTime;$('#audio-elapsed').textContent=format(audio.currentTime);seek.setAttribute('aria-valuetext',format(audio.currentTime));for(const s of segments)s.classList.toggle('playing',audio.currentTime>=Number(s.dataset.time)&&audio.currentTime<Number(s.dataset.end));});
-  on(seek,'input',()=>{audio.currentTime=Number(seek.value);});
+  on(audio,'timeupdate',()=>{if(activePoint&&clipEnd!==null&&audio.currentTime>=clipEnd){audio.pause();clearPoint();}seek.value=audio.currentTime;$('#audio-elapsed').textContent=format(audio.currentTime);seek.setAttribute('aria-valuetext',format(audio.currentTime));for(const s of segments)s.classList.toggle('playing',audio.currentTime>=Number(s.dataset.time)&&audio.currentTime<Number(s.dataset.end));});
+  on(seek,'input',()=>{seekTicket++;clearPoint();audio.currentTime=Number(seek.value);});
   on($('#audio-speed'),'change',e=>audio.playbackRate=Number(e.target.value));
   on($('#audio-mute'),'click',e=>{audio.muted=!audio.muted;e.target.textContent=audio.muted?'恢复声音':'静音';e.target.setAttribute('aria-pressed',String(audio.muted));});
   function filterTranscript(){const q=$('#transcript-search').value.trim().toLocaleLowerCase();let count=0;for(const s of segments){s.hidden=!s.textContent.toLocaleLowerCase().includes(q);if(!s.hidden)count++;}$('#search-empty').hidden=count>0;}
@@ -73,8 +76,14 @@
   on($('#print-button'),'click',()=>window.print());
   on(root,'click',async e=>{
    const button=e.target.closest('[data-time]');if(!button)return;
-   try{if(audio.readyState===0){audio.load();await new Promise((resolve,reject)=>{audio.addEventListener('loadedmetadata',resolve,{once:true,signal});audio.addEventListener('error',reject,{once:true,signal});signal.addEventListener('abort',reject,{once:true});});}if(signal.aborted)return;audio.currentTime=Number(button.dataset.time);await audio.play();}
-   catch{if(!signal.aborted){Rhino.toast('请在页面底部的播放器中播放音频。');$('#source').scrollIntoView();}}
+   const ticket=++seekTicket,isPoint=button.classList.contains('point-replay');
+   if(isPoint&&button===activePoint&&audio.currentTime>=Number(button.dataset.time)&&audio.currentTime<Number(button.dataset.clipEnd)){
+    if(audio.paused)audio.play().catch(()=>Rhino.toast('音频暂时无法播放，请稍后重试。'));else audio.pause();return;
+   }
+   audio.pause();clearPoint();if(isPoint){button.classList.add('is-loading');button.querySelector('.point-play-label').textContent='载入';}
+   try{if(audio.readyState===0){audio.load();await new Promise((resolve,reject)=>{audio.addEventListener('loadedmetadata',resolve,{once:true,signal});audio.addEventListener('error',reject,{once:true,signal});signal.addEventListener('abort',reject,{once:true});});}if(signal.aborted||ticket!==seekTicket)return;audio.currentTime=Number(button.dataset.time);if(isPoint){activePoint=button;clipEnd=Number(button.dataset.clipEnd);}await audio.play();}
+   catch{if(!signal.aborted&&ticket===seekTicket){clearPoint();Rhino.toast('音频暂时无法播放，请稍后重试，或使用页面底部的播放器。');}}
+   finally{if(isPoint)button.classList.remove('is-loading');if(ticket===seekTicket)syncPoints();}
   });
   function save(){Rhino.persist(id,{progress:Math.max(progress,Rhino.state(id).progress||0),anchor:currentAnchor});}
   function onScroll(){const b=$('.article-body').getBoundingClientRect(),bounds=scroller===window?{top:0,height:innerHeight}:scroller.getBoundingClientRect();progress=Math.max(0,Math.min(1,(bounds.top+bounds.height*.65-b.top)/b.height));$('#progress').style.width=`${progress*100}%`;clearTimeout(timer);timer=setTimeout(save,350);}
