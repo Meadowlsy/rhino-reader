@@ -14,7 +14,6 @@
  let calendarMonth=validMonth(month)?month:today.slice(0,7);
  function shiftMonth(value,delta){const [y,m]=value.split('-').map(Number),d=new Date(y,m-1+delta,1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
  function renderCalendar(){
-  today=todayInShanghai();
   const [year,m]=calendarMonth.split('-').map(Number),offset=(new Date(year,m-1,1).getDay()+6)%7,days=new Date(year,m,0).getDate();
   document.getElementById('calendar-month').textContent=`${year} 年 ${m} 月`;
   document.getElementById('calendar-today-number').textContent=Number(today.slice(8));
