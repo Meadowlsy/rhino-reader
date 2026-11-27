@@ -1,7 +1,8 @@
 {
   "site_id": "rhino-reader",
-  "build_id": "2066092047a8416c1af8c99b7530b17bdf47e2303de5939492d50f4dec30d488",
+  "build_id": "8db7befd2d8754139b5947fc3bb58fe417c083519d72258e3d5d3cc935ec4b82",
   "video_ids": [
+    "aa5ps8bjF1o",
     "clJ37DZg2po",
     "ahHigtP50So",
     "v2KyRWv3SHc",
@@ -21,5 +22,5 @@
     "qcdt6yQKt_4",
     "-C0B7AEwOcU"
   ],
-  "latest_published_date": "2026-11-25"
+  "latest_published_date": "2026-11-26"
 }
